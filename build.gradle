@@ -45,7 +45,7 @@ publishing {
             pom {
                 name = 'ImguiUtils'
                 description = 'A simple wrapper for SpaiR ImGui bindings'
-                url = 'https://git.someboringnerd.xyz/SomeBoringNerd/Spear-Imgui-util'
+                url = 'https://github.com/TaxMachine/ImguiUtils'
                 licenses {
                     license {
                         name = 'The Apache License, Version 2.0'
@@ -64,12 +64,12 @@ publishing {
     }
     repositories {
         maven {
-            name = "someboring-maven"
-            url = "https://maven.self-hosted.lol/releases"
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/TaxMachine/ImguiUtils"
 
             credentials {
-                username = System.getenv("MAVEN_SELFHOSTED_USERNAME")
-                password = System.getenv("MAVEN_SELFHOSTED_TOKEN")
+                username = project.findProperty("gpr.user") as String ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String ?: System.getenv("TOKEN")
             }
 
             authentication {
