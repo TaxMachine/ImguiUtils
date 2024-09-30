@@ -1,0 +1,86 @@
+plugins {
+    id("java-library")
+    id("maven-publish")
+}
+
+group = "xyz.someboringnerd"
+version = "1.0.3"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    implementation 'org.projectlombok:lombok:1.18.28'
+
+    // ImGui
+    implementation("io.github.spair:imgui-java-binding:1.86.8")
+    implementation("io.github.spair:imgui-java-lwjgl3:1.86.8") {
+        exclude group: "org.lwjgl"
+    }
+
+    ["linux", "macos", "windows"].each {
+        implementation("io.github.spair:imgui-java-natives-$it:1.86.8")
+    }
+}
+
+tasks.register('test_', Exec) {
+    System.out.println("Username for maven publishing: " + System.getenv("MAVEN_SELFHOSTED_USERNAME"))
+
+    commandLine 'bash echo done !'
+}
+
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        java(MavenPublication) {
+            from components.java
+            pom {
+                name = 'ImguiUtils'
+                description = 'A simple wrapper for SpaiR ImGui bindings'
+                url = 'https://git.someboringnerd.xyz/SomeBoringNerd/Spear-Imgui-util'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'SomeBoringNerd'
+                        name = 'Morgane'
+                        email = 'contact@someboringnerd.xyz'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "someboring-maven"
+            url = "https://maven.self-hosted.lol/releases"
+
+            credentials {
+                username = System.getenv("MAVEN_SELFHOSTED_USERNAME")
+                password = System.getenv("MAVEN_SELFHOSTED_TOKEN")
+            }
+
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
